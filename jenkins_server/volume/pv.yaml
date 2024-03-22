@@ -9,4 +9,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /c/Users/BenardSilomaMasikond/Desktop/kubernetes/jenkinsData # Replace with your local path
+    path: /c/Users/FidelisWairimu/Desktop/k8s # Replace with your local pa/c

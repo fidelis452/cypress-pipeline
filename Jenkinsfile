@@ -17,8 +17,8 @@ pipeline {
             steps {
                 script {
                     git branch: 'main',
-                        credentialsId: '9e708a8d-c1d1-4a8a-9632-3b31ad932908',
-                        url: 'https://github.com/silomaben/cypress-pipetest.git'
+                        credentialsId: '',
+                        url: 'https://github.com/fidelis452/cypress-pipetest.git'
                 }
             }
         }

@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: ui-app
-          image: silomaben/ui-app
+          image: fideliswaweu19/ui-app
           ports:
             - containerPort: 80
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always

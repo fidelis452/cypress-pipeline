@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
         - name: express-app
-          image: silomaben/express-api
+          image: fideliswaweu19/express-api
           ports:
             - containerPort: 3000
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
 
