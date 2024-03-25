@@ -46,9 +46,9 @@ pipeline {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-                        jenkinsPod = sh(script: './kubectl get pods -n jenkins -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+                        jenkinsPod = sh(script: './kubectl get pods -n default -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
                         echo "Found pod name: $jenkinsPod"
-                        cypressPod = sh(script: "./kubectl get pods -n jenkins -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+                        cypressPod = sh(script: "./kubectl get pods -n default -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
                         echo "Found Cypress pod name: $cypressPod"
                     }
                 }
@@ -60,7 +60,7 @@ pipeline {
                 script {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                     waitForReport()
-                    sh "./kubectl exec -n jenkins $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
+                    sh "./kubectl exec -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
                     archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
                     }
                 }
@@ -74,7 +74,7 @@ pipeline {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
 
                         // Run kubectl logs command and store the output
-                        logs = sh(script: "./kubectl logs -n jenkins $cypressPod -c e2e-test-app", returnStdout: true).trim()
+                        logs = sh(script: "./kubectl logs -n default $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
                         // Check if the text "all specs passed" is present in the logs
                         if (logs.contains("all specs passed")) {
@@ -86,11 +86,11 @@ pipeline {
 
                         //kill the created pods and service.
 
-                        sh "./kubectl delete -n jenkins deployment express-app"
-                        sh "./kubectl delete -n jenkins deployment ui-app"
-                        sh "./kubectl delete -n jenkins job e2e-test-app-job"
-                        sh "./kubectl delete -n jenkins service ui-app"
-                        sh "./kubectl delete -n jenkins service express-app-service"
+                        sh "./kubectl delete -n default deployment express-app"
+                        sh "./kubectl delete -n default deployment ui-app"
+                        sh "./kubectl delete -n default job e2e-test-app-job"
+                        sh "./kubectl delete -n default service ui-app"
+                        sh "./kubectl delete -n default service express-app-service"
                     }
                 }
             }
