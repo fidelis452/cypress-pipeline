@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  namespace: jenkins
+  # namespace: jenkins
   name: e2e-test-app-job
 spec:
   template:
