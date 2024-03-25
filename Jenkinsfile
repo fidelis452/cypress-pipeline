@@ -60,7 +60,7 @@ pipeline {
                 script {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                     waitForReport()
-                    sh "./kubectl exec -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
+                    sh "./kubectl exec -it -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
                     archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
                     }
                 }
