@@ -33,7 +33,7 @@ pipeline {
 
                         sh 'rm -f /var/jenkins_home/html/index.html' 
 
-                        sh './kubectl apply -f express-api/kubernetes'
+                        sh './kubectl apply -f express-api/kubernetes/deployment.yaml'
                         sh './kubectl apply -f ui-app/kubernetes'
                         sh './kubectl apply -f cypress-tests/kubernetes/job.yaml'
 
