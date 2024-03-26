@@ -40,16 +40,6 @@ pipeline {
 
         stage('Kill pods') {
             steps {
-                // script {
-                //     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
-
-                //         sh '''
-                //         ./kubectl delete -n default deployment express-app
-                //         ./kubectl delete -n default deployment ui-app
-                //         '''
-                //     }
-                // }
-
                 script {
                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
                         // Check if the pod exists before attempting to delete it
@@ -59,10 +49,12 @@ pipeline {
                         // Delete the pod if it exists
                         if (expressPodExists == 0) {
                             sh "./kubectl delete -n default deployment express-app"
+                            sleep 30
                         }
                         
                         if (uiPodExists == 0) {
                             sh "./kubectl delete -n default deployment ui-app"
+                            sleep 30
                         }
                     }
                 }
@@ -116,26 +108,26 @@ pipeline {
         }
 
 
-        // stage('Run cypress') {
-        //     steps {
-        //         script {
-        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-        //                 // Check status code
-        //                 if (statusCode == 200) {
-        //                     sh '''
-        //                       ./kubectl apply -f cypress-tests/kubernetes
+        stage('Run cypress') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                        // Check status code
+                        if (statusCode == 200) {
+                            sh '''
+                              ./kubectl apply -f cypress-tests/kubernetes
 
-        //                         sleep 50
-        //                       ./kubectl get pods -n jenkins
-        //                     '''
+                                sleep 50
+                              ./kubectl get pods -n jenkins
+                            '''
                             
-        //                 } else {
-        //                     echo "Status is not 200 - ${statusCode}"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                        } else {
+                            echo "Status is not 200 - ${statusCode}"
+                        }
+                    }
+                }
+            }
+        }
 
         // stage('Get Pod Names') {
         //     steps {
