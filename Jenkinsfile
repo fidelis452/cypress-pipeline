@@ -68,6 +68,8 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
+                        sleep 50
+
                         sh 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students'
 
                         // Execute curl command and capture output
