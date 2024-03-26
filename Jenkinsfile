@@ -65,6 +65,7 @@ pipeline {
                             sh "./kubectl delete -n default deployment ui-app"
                         }
                     }
+                }
             }
         }
 
