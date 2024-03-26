@@ -55,7 +55,8 @@ pipeline {
         stage('Run Express Api') {
             steps {
                 script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {   
+                                           
                         sh './kubectl apply -f express-api/kubernetes'
 
                         // Execute curl command and capture output
@@ -86,7 +87,7 @@ pipeline {
                               ./kubectl apply -f ui-app/kubernetes
 
                                 sleep 50
-                              ./kubectl get pods -n jenkins
+                              ./kubectl get pods
                             '''
                             
                         } else {
