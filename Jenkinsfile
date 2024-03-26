@@ -169,45 +169,45 @@ pipeline {
         }
         
 
-        // stage('Deciding deployment and stopping testing pods') {
-        //     steps {
-        //         script {
-        //             withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+        stage('Deciding deployment and stopping testing pods') {
+            steps {
+                script {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
 
-        //                 // Run kubectl logs command and store the output
-        //                 logs = sh(script: "./kubectl logs -n default $cypressPod -c e2e-test-app", returnStdout: true).trim()
+                        // Run kubectl logs command and store the output
+                        logs = sh(script: "./kubectl logs -n default $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
-        //                 // Check if the text "all specs passed" is present in the logs
-        //                 if (logs.contains("all specs passed")) {
-        //                     echo "Specs passed: true \n Proceeding to deployment"
-        //                     deploy = true
-        //                 } else {
-        //                     echo "some tests failed...Check the report for issues \n Deployment aborted"
-        //                 }
+                        // Check if the text "all specs passed" is present in the logs
+                        if (logs.contains("all specs passed")) {
+                            echo "Specs passed: true \n Proceeding to deployment"
+                            deploy = true
+                        } else {
+                            echo "some tests failed...Check the report for issues \n Deployment aborted"
+                        }
 
-        //                 //kill the created pods and service.
+                        //kill the created pods and service.
 
-        //                 sh "./kubectl delete -n default deployment express-app"
-        //                 sh "./kubectl delete -n default deployment ui-app"
-        //                 sh "./kubectl delete -n default job e2e-test-app-job"
-        //                 sh "./kubectl delete -n default service ui-app"
-        //                 sh "./kubectl delete -n default service express-app-service"
-        //             }
-        //         }
-        //     }
-        // }
+                        // sh "./kubectl delete -n default deployment express-app"
+                        // sh "./kubectl delete -n default deployment ui-app"
+                        // sh "./kubectl delete -n default job e2e-test-app-job"
+                        // sh "./kubectl delete -n default service ui-app"
+                        // sh "./kubectl delete -n default service express-app-service"
+                    }
+                }
+            }
+        }
 
-        // stage('Deploy') {
-        //     steps {
-        //         script {
-        //             if(deploy==true){
-        //                 echo "Niiice!!! Deploying ATQ now."
-        //             } else {
-        //                 echo "Deploying aborted. Check and resolve the failing test and try again!"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Deploy') {
+            steps {
+                script {
+                    if(deploy==true){
+                        echo "Niiice!!! Deploying ATQ now."
+                    } else {
+                        echo "Deploying aborted. Check and resolve the failing test and try again!"
+                    }
+                }
+            }
+        }
 
     }
 }
