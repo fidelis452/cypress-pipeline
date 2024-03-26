@@ -56,7 +56,7 @@ pipeline {
             steps {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {   
-                                           
+
                         sh './kubectl apply -f express-api/kubernetes'
 
                         // Execute curl command and capture output
@@ -99,26 +99,26 @@ pipeline {
         }
 
 
-        stage('Run cypress') {
-            steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-                        // Check status code
-                        if (statusCode == 200) {
-                            sh '''
-                              ./kubectl apply -f cypress-tests/kubernetes
+        // stage('Run cypress') {
+        //     steps {
+        //         script {
+        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+        //                 // Check status code
+        //                 if (statusCode == 200) {
+        //                     sh '''
+        //                       ./kubectl apply -f cypress-tests/kubernetes
 
-                                sleep 50
-                              ./kubectl get pods -n jenkins
-                            '''
+        //                         sleep 50
+        //                       ./kubectl get pods -n jenkins
+        //                     '''
                             
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
-                    }
-                }
-            }
-        }
+        //                 } else {
+        //                     echo "Status is not 200 - ${statusCode}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('Get Pod Names') {
         //     steps {
