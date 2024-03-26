@@ -51,23 +51,23 @@ pipeline {
                         // Delete the pod if it exists
                         if (expressPodExists == 0) {
                             sh "./kubectl delete -n default deployment express-app"
-                            sleep 50
+                            // sleep 50
                         }
                         
                         if (uiPodExists == 0) {
                             sh "./kubectl delete -n default deployment ui-app"
-                            sleep 50
+                            // sleep 50
                         }
                         
                         // Delete the pod if it exists
                         if (expressServiceExists == 0) {
                             sh "./kubectl delete -n default service express-app-service"
-                            sleep 50
+                            // sleep 50
                         }
                         
                         if (uiServiceExists == 0) {
                             sh "./kubectl delete -n default service ui-app"
-                            sleep 50
+                            // sleep 50
                         }
                     }
                 }
@@ -133,7 +133,7 @@ pipeline {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {     
                             sh '''
                               ./kubectl apply -f cypress-tests/kubernetes
-                              
+
                               ./kubectl get pods
                             '''
                     }
