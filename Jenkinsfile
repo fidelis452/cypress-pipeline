@@ -69,6 +69,8 @@ pipeline {
                             sh "./kubectl delete -n default service ui-app"
                             // sleep 50
                         }
+
+                        sleep 50
                     }
                 }
             }
