@@ -83,7 +83,7 @@ pipeline {
 
                         sleep 50
 
-                        sh 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students'
+                        sh 'curl http://express-app-service/students'
 
                         // Execute curl command and capture output
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
@@ -141,30 +141,30 @@ pipeline {
             }
         }
 
-        // stage('Get Pod Names') {
-        //     steps {
-        //         script {
-        //              withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-        //                 jenkinsPod = sh(script: './kubectl get pods -n default -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
-        //                 echo "Found pod name: $jenkinsPod"
-        //                 cypressPod = sh(script: "./kubectl get pods -n default -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
-        //                 echo "Found Cypress pod name: $cypressPod"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Get Pod Names') {
+            steps {
+                script {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                        jenkinsPod = sh(script: './kubectl get pods -n default -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+                        echo "Found pod name: $jenkinsPod"
+                        cypressPod = sh(script: "./kubectl get pods -n default -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+                        echo "Found Cypress pod name: $cypressPod"
+                    }
+                }
+            }
+        }
 
-        // stage('Wait for tests to run and report generation') {
-        //     steps {
-        //         script {
-        //             withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-        //             waitForReport()
-        //             sh "./kubectl exec -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
-        //             archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Wait for tests to run and report generation') {
+            steps {
+                script {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    waitForReport()
+                    sh "./kubectl exec -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
+                    archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+                    }
+                }
+            }
+        }
         
 
         // stage('Deciding deployment and stopping testing pods') {
