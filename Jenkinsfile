@@ -68,8 +68,11 @@ pipeline {
 
                         sh './kubectl apply -f express-api/kubernetes'
 
+                        sh 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students'
+
                         // Execute curl command and capture output
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
+
                         
                         // Convert output to integer
                         statusCode = statusOutput.toInteger()
@@ -96,6 +99,7 @@ pipeline {
                               ./kubectl apply -f ui-app/kubernetes
 
                                 sleep 50
+
                               ./kubectl get pods
                             '''
                             
@@ -118,7 +122,7 @@ pipeline {
                               ./kubectl apply -f cypress-tests/kubernetes
 
                                 sleep 50
-                              ./kubectl get pods -n jenkins
+                              ./kubectl get pods
                             '''
                             
                         } else {
