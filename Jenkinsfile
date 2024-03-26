@@ -45,6 +45,8 @@ pipeline {
                         // Check if the pod exists before attempting to delete it
                         def expressPodExists = sh(script: "./kubectl get pods -n default | grep express-app", returnStatus: true)
                         def uiPodExists = sh(script: "./kubectl get pods -n default | grep ui-app", returnStatus: true)
+                        def expressServiceExists = sh(script: "./kubectl get services -n default | grep express-app-service", returnStatus: true)
+                        def uiServiceExists = sh(script: "./kubectl get services -n default | grep ui-app", returnStatus: true)
                         
                         // Delete the pod if it exists
                         if (expressPodExists == 0) {
@@ -54,6 +56,17 @@ pipeline {
                         
                         if (uiPodExists == 0) {
                             sh "./kubectl delete -n default deployment ui-app"
+                            sleep 50
+                        }
+                        
+                        // Delete the pod if it exists
+                        if (expressServiceExists == 0) {
+                            sh "./kubectl delete -n default service express-app-service"
+                            sleep 50
+                        }
+                        
+                        if (uiServiceExists == 0) {
+                            sh "./kubectl delete -n default service ui-app"
                             sleep 50
                         }
                     }
@@ -117,19 +130,14 @@ pipeline {
         stage('Run cypress') {
             steps {
                 script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-                        // Check status code
-                        if (statusCode == 200) {
+                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {     
                             sh '''
                               ./kubectl apply -f cypress-tests/kubernetes
 
                                 sleep 50
+
                               ./kubectl get pods
                             '''
-                            
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
                     }
                 }
             }
