@@ -49,12 +49,12 @@ pipeline {
                         // Delete the pod if it exists
                         if (expressPodExists == 0) {
                             sh "./kubectl delete -n default deployment express-app"
-                            sleep 30
+                            sleep 50
                         }
                         
                         if (uiPodExists == 0) {
                             sh "./kubectl delete -n default deployment ui-app"
-                            sleep 30
+                            sleep 50
                         }
                     }
                 }
