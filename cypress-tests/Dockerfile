@@ -10,6 +10,9 @@ COPY . .
 
 # Set the entry point script
 COPY entrypoint.sh /app/entrypoint.sh
+
+RUN ls -l /app
+
 RUN chmod +x /app/entrypoint.sh
 
 # Set the entry point
