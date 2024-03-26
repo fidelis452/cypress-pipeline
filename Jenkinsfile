@@ -40,15 +40,31 @@ pipeline {
 
         stage('Kill pods') {
             steps {
-                script {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
+                // script {
+                //     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
 
-                        sh '''
-                        ./kubectl delete -n default deployment express-app
-                        ./kubectl delete -n default deployment ui-app
-                        '''
+                //         sh '''
+                //         ./kubectl delete -n default deployment express-app
+                //         ./kubectl delete -n default deployment ui-app
+                //         '''
+                //     }
+                // }
+
+                script {
+                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                        // Check if the pod exists before attempting to delete it
+                        def expressPodExists = sh(script: "./kubectl get pods -n default | grep express-app", returnStatus: true)
+                        def uiPodExists = sh(script: "./kubectl get pods -n default | grep ui-app", returnStatus: true)
+                        
+                        // Delete the pod if it exists
+                        if (expressPodExists == 0) {
+                            sh "./kubectl delete -n default deployment express-app"
+                        }
+                        
+                        if (uiPodExists == 0) {
+                            sh "./kubectl delete -n default deployment ui-app"
+                        }
                     }
-                }
             }
         }
 
