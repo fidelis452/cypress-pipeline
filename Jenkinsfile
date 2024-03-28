@@ -134,7 +134,6 @@
                     }
                 }
             }
-        }
 
 
         stage('Run cypress') {
