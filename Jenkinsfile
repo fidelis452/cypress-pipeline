@@ -14,6 +14,7 @@ pipeline {
         cypressPod = ''
         logs = ''
         deploy = false
+        statusCode = 0
     }
 
 
@@ -89,11 +90,23 @@ pipeline {
             steps {
                 script {  
 
-                        sh 'kubectl apply -f express-api/kubernetes -n filetracker '
+                    
+                        sh '''
+                        
+                        pwd
+                    ls -la
+                     kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
+                     kubectl get pods,services -n filetracker
+
+                     cd ~
+                     pwd
+                     ls -la
+                     
+                        '''
 
                         sleep 50
 
-                        sh 'curl http://express-app-service/students'
+                        // sh 'curl http://express-app-service/students'
 
                         // Execute curl command and capture output
                         def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
