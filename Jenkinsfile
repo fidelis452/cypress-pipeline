@@ -81,7 +81,7 @@ pipeline {
                             sh "kubectl delete -n filetracker job e2e-test-app-job"
                         }
 
-                        sleep 50
+                        sleep 30
                 }
             }
         }
@@ -103,7 +103,7 @@ pipeline {
                     //  pwd
                     //  ls -la
 
-                    sleep 50
+                    sleep 30
 
                     sh 'kubectl get pods -n filetracker'
                     sh 'kubectl get svc -n filetracker'
@@ -114,7 +114,7 @@ pipeline {
                     def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
 
                     echo "The code is - ${statusOutput}"
-                    
+
                     // Convert output to integer
                     statusCode = statusOutput.toInteger()
                     
