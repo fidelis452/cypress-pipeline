@@ -1,79 +1,82 @@
-pipeline {
-    agent any
-    
+    agent {
+            node {
+                label 'alpha'
+            }
+        }
+
     options {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
     }
-    
+
     environment {
         jenkinsPod = ''
         cypressPod = ''
         logs = ''
         deploy = false
-        statusCode = 0
     }
 
+
     stages {
-        stage('Git Checkout') {
-            steps {
-                script {
-                    git branch: 'main',
-                        credentialsId: '',
-                        url: 'https://github.com/fidelis452/cypress-pipeline.git'
-                }
-            }
-        }
+        // stage('Git Checkout') {
+        //     steps {
+        //         script {
+        //             git branch: 'main',
+        //                 credentialsId: '',
+        //                 url: 'https://github.com/fidelis452/cypress-pipeline.git'
+        //         }
+        //     }
+        // }
 
-        stage('Set up Kubectl') {
-            steps {
-                script {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
+        // stage('Set up Kubectl') {
+        //     steps {
+        //         script {
+        //             withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {    
 
-                        sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
-                        sh 'chmod u+x ./kubectl'
-                        sh 'rm -f /var/jenkins_home/html/index.html' 
+        //                 sh 'curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.20.5/bin/linux/amd64/kubectl"'
+        //                 sh 'chmod u+x kubectl'
+        //                 sh 'rm -f /var/jenkins_home/html/index.html' 
 
-                    }
-                }
-            }
-        }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Kill pods') {
             steps {
                 script {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
+                    // withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
 
                         // Check if the pod exists before attempting to delete it
-                        def expressPodExists = sh(script: "./kubectl get pods -n default | grep express-app", returnStatus: true)
-                        def uiPodExists = sh(script: "./kubectl get pods -n default | grep ui-app", returnStatus: true)
+                        def expressPodExists = sh(script: "kubectl get pods -n filetracker | grep express-app", returnStatus: true)
+                        def uiPodExists = sh(script: "kubectl get pods -n filetracker | grep ui-app", returnStatus: true)
 
                         // services
-                        def expressServiceExists = sh(script: "./kubectl get services -n default | grep express-app-service", returnStatus: true)
-                        def uiServiceExists = sh(script: "./kubectl get services -n default | grep ui-app", returnStatus: true)
+                        def expressServiceExists = sh(script: "kubectl get services -n filetracker | grep express-app-service", returnStatus: true)
+                        def uiServiceExists = sh(script: "kubectl get services -n filetracker | grep ui-app", returnStatus: true)
 
                         // jobs
-                        def cypressJobExists = sh(script: "./kubectl get jobs -n default | grep e2e-test-app-job", returnStatus: true)
+                        def cypressJobExists = sh(script: "kubectl get jobs -n filetracker | grep e2e-test-app-job", returnStatus: true)
                         
                         // Delete the pod if it exists
                         if (expressPodExists == 0) {
-                            sh "./kubectl delete -n default deployment express-app"
+                            sh "kubectl delete -n filetracker deployment express-app"
                         }
                         
                         if (uiPodExists == 0) {
-                            sh "./kubectl delete -n default deployment ui-app"
+                            sh "kubectl delete -n filetracker deployment ui-app"
                         }
                         
                         // Delete the pod if it exists
                         if (expressServiceExists == 0) {
-                            sh "./kubectl delete -n default service express-app-service"
+                            sh "kubectl delete -n filetracker service express-app-service"
                         }
                         
                         if (uiServiceExists == 0) {
-                            sh "./kubectl delete -n default service ui-app"
+                            sh "kubectl delete -n filetracker service ui-app"
                         }
 
                          if (cypressJobExists == 0) {
-                            sh "./kubectl delete job e2e-test-app-job"
+                            sh "kubectl delete -n filetracker job e2e-test-app-job"
                         }
 
                         sleep 50
@@ -87,7 +90,7 @@ pipeline {
                 script {
                      withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {   
 
-                        sh './kubectl apply -f express-api/kubernetes'
+                        sh 'kubectl apply -f -n filetracker express-api/kubernetes'
 
                         sleep 50
 
@@ -114,16 +117,15 @@ pipeline {
 
         stage('Run Ui App') {
             steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
+                script {                     
                         // Check status code
                         if (statusCode == 200) {
                             sh '''
-                              ./kubectl apply -f ui-app/kubernetes
+                              kubectl apply -f -n filetracker ui-app/kubernetes
 
                                 sleep 50
 
-                              ./kubectl get pods
+                              kubectl get pods -n filetracker
                             '''
                             
                         } else {
@@ -137,12 +139,11 @@ pipeline {
 
         stage('Run cypress') {
             steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {     
+                script {    
                             sh '''
-                              ./kubectl apply -f cypress-tests/kubernetes
+                              kubectl apply -f -n filetracker cypress-tests/kubernetes
 
-                              ./kubectl get pods
+                              kubectl get pods
                             '''
                     }
                 }
@@ -151,37 +152,37 @@ pipeline {
 
         stage('Get Pod Names') {
             steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {                      
-                        jenkinsPod = sh(script: './kubectl get pods -n default -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
-                        echo "Found pod name: $jenkinsPod"
-                        cypressPod = sh(script: "./kubectl get pods -n default -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+                script {               
+                    sh '''
+                    kubectl get pods -n filetracker
+                    '''       
+                        // jenkinsPod = sh(script: 'kubectl get pods -n filetracker -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+                        // echo "Found pod name: $jenkinsPod"
+                        cypressPod = sh(script: "kubectl get pods -n filetracker -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
                         echo "Found Cypress pod name: $cypressPod"
                     }
                 }
             }
         }
 
-        stage('Wait for tests to run and report generation') {
-            steps {
-                script {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
-                    waitForReport()
-                    sh "./kubectl exec -n default $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
-                    archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
-                    }
-                }
-            }
-        }
+        // stage('Wait for tests to run and report generation') {
+        //     steps {
+        //         script {
+        //             waitForReport()
+        //             sh "kubectl exec -n filetracker $jenkinsPod -- cat /var/jenkins_home/html/index.html > report.html"
+        //             archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: true
+        //             }
+        //         }
+        //     }
+        // }
         
 
         stage('Deciding deployment and stopping testing pods') {
             steps {
                 script {
-                    withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {
 
                         // Run kubectl logs command and store the output
-                        logs = sh(script: "./kubectl logs -n default $cypressPod -c e2e-test-app", returnStdout: true).trim()
+                        logs = sh(script: "kubectl logs -n filetracker $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
                         // Check if the text "all specs passed" is present in the logs
                         if (logs.contains("All specs passed")) {
@@ -193,11 +194,11 @@ pipeline {
 
                         //kill the created pods and service.
 
-                        // sh "./kubectl delete -n default deployment express-app"
-                        // sh "./kubectl delete -n default deployment ui-app"
-                        // sh "./kubectl delete -n default job e2e-test-app-job"
-                        // sh "./kubectl delete -n default service ui-app"
-                        // sh "./kubectl delete -n default service express-app-service"
+                        // sh "kubectl delete -n filetracker deployment express-app"
+                        // sh "kubectl delete -n filetracker deployment ui-app"
+                        // sh "kubectl delete -n filetracker job e2e-test-app-job"
+                        // sh "kubectl delete -n filetracker service ui-app"
+                        // sh "kubectl delete -n filetracker service express-app-service"
                     }
                 }
             }
@@ -218,20 +219,20 @@ pipeline {
     }
 }
 
-def waitForReport() {
-    timeout(time: 5, unit: 'MINUTES') {
-        script {
-            def counter = 0 
-            while (!fileExists('/var/jenkins_home/html/index.html')) {
-                counter++ 
-                echo "Waiting for index.html file to exist... (Attempt ${counter})"
-                sleep 10 
-            }
-        }
-    }
-}
+// def waitForReport() {
+//     timeout(time: 5, unit: 'MINUTES') {
+//         script {
+//             def counter = 0 
+//             while (!fileExists('/var/jenkins_home/html/index.html')) {
+//                 counter++ 
+//                 echo "Waiting for index.html file to exist... (Attempt ${counter})"
+//                 sleep 10 
+//             }
+//         }
+//     }
+// }
 
 
-def fileExists(filePath) {
-    return sh(script: "[ -f '$filePath' ]", returnStatus: true) == 0
-}
+// def fileExists(filePath) {
+//     return sh(script: "[ -f '$filePath' ]", returnStatus: true) == 0
+// }
