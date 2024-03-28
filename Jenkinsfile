@@ -106,7 +106,7 @@ pipeline {
 
                         sleep 50
 
-                     kubectl get pods
+                     sh 'kubectl get pods'
 
                         // sh 'curl http://express-app-service/students'
 
