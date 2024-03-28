@@ -1,3 +1,4 @@
+pipeline {
     agent {
             node {
                 label 'alpha'
@@ -80,7 +81,6 @@
                         }
 
                         sleep 50
-                    }
                 }
             }
         }
@@ -147,7 +147,6 @@
                     }
                 }
             }
-        }
 
         stage('Get Pod Names') {
             steps {
@@ -162,7 +161,6 @@
                     }
                 }
             }
-        }
 
         // stage('Wait for tests to run and report generation') {
         //     steps {
@@ -201,7 +199,6 @@
                     }
                 }
             }
-        }
 
         stage('Deploy') {
             steps {
@@ -215,7 +212,6 @@
             }
         }
 
-    }
 }
 
 // def waitForReport() {
