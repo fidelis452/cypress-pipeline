@@ -93,84 +93,44 @@ pipeline {
                     
                         sh '''
                         
-                            pwd
-                            ls -la
-                            kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
-                            kubectl get pods,services -n filetracker
+                        pwd
+                    ls -la
+                     kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
+                     kubectl get pods,services -n filetracker
 
-                            cd ~
-                            pwd
-                            ls -la
+                     cd ~
+                     pwd
+                     ls -la
                      
                         '''
 
+                    sleep 50
+
+                     sh 'kubectl get pods -n filetracker'
+
                     sleep 30
 
-                    sh 'kubectl get pods -n filetracker'
-
-                    sleep 30
-
-                    sh 'kubectl get pods -n filetracker'
+                     sh 'kubectl get pods -n filetracker'
                         // sh 'curl http://express-app-service/students'
 
                         // Execute curl command and capture output
-                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true, returnStatus: true).trim()
-                    
-                    // Convert output to integer
-                    statusCode = statusOutput.toInteger()
+                        def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
 
-                    if (statusCode == 200) {
-                            echo "Status is 200 - OK"
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
-                    
-                    // Check status code
-                    if(statusOutput == 0){
-                        echo "Failed to execute curl command"
-                    }else{
-                        if (statusCode == 200) {
-                            echo "Status is 200 - OK"
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
-                    }
+                        
+                        // Convert output to integer
+                        statusCode = statusOutput.toInteger()
+                        
+                        echo '${statusCode}'
+                        
+                        // Check status code
+                        // if (statusCode == 200) {
+                        //     echo "Status is 200 - OK"
+                        // } else {
+                        //     echo "Status is not 200 - ${statusCode}"
+                        // }
                 }
             }
         }
-
-        // stage('Run Express Api') {
-        //     steps {
-        //         script {
-        //             // Apply deployment YAML
-        //             sh 'kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker'
-                    
-        //             // Wait for pods to be ready
-        //             sleep 30
-                    
-        //             // Check the status of pods
-        //             sh 'kubectl get pods -n filetracker'
-                    
-        //             // Execute curl command and capture output
-        //             def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true, returnStatus: true)
-                    
-        //             // Check if curl command was successful
-        //             if (statusOutput == 0) {
-        //                 // Capture HTTP status code
-        //                 statusCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim().toInteger()
-                        
-        //                 // Check status code
-        //                 if (statusCode == 200) {
-        //                     echo "Status is 200 - OK"
-        //                 } else {
-        //                     echo "Status is not 200 - ${statusCode}"
-        //                 }
-        //             } else {
-        //                 echo "Failed to execute curl command"
-        //             }
-        //         }
-        //     }
-        // }
 
 
         stage('Run Ui App') {
@@ -200,7 +160,7 @@ pipeline {
                             sh '''
                               kubectl apply -f cypress-tests/kubernetes -n filetracker
 
-                              kubectl get pods -n filetracker
+                              kubectl get pods
                             '''
                 }
             }
