@@ -106,79 +106,76 @@ pipeline {
 
                     sleep 50
 
-                     sh 'kubectl get pods -n filetracker'
+                    sh 'kubectl get pods -n filetracker'
+                    
+                    // sh 'curl http://express-app-service/students'
 
-                    sleep 30
+                    // Execute curl command and capture output
+                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
 
-                     sh 'kubectl get pods -n filetracker'
-                        // sh 'curl http://express-app-service/students'
-
-                        // Execute curl command and capture output
-                        def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
-
-                        
-                        // Convert output to integer
-                        statusCode = statusOutput.toInteger()
-                        
-                        echo '${statusCode}'
-                        
-                        // Check status code
-                        // if (statusCode == 200) {
-                        //     echo "Status is 200 - OK"
-                        // } else {
-                        //     echo "Status is not 200 - ${statusCode}"
-                        // }
+                    
+                    // Convert output to integer
+                    statusCode = statusOutput.toInteger()
+                    
+                    echo '${statusCode}'
+                    
+                    // Check status code
+                    // if (statusCode == 200) {
+                    //     echo "Status is 200 - OK"
+                    // } else {
+                    //     echo "Status is not 200 - ${statusCode}"
+                    // }
                 }
             }
         }
 
 
-        stage('Run Ui App') {
-            steps {
-                script {                     
-                        // Check status code
-                        if (statusCode == 200) {
-                            sh '''
-                              kubectl apply -f  ui-app/kubernetes -n filetracker
+        // stage('Run Ui App') {
+        //     steps {
+        //         script {                     
+        //                 // Check status code
+        //                 if (statusCode == 200) {
+        //                     sh '''
+        //                       kubectl apply -f  ui-app/kubernetes -n filetracker
 
-                                sleep 50
+        //                         sleep 50
 
-                              kubectl get pods -n filetracker
-                            '''
+        //                       kubectl get pods -n filetracker
+        //                     '''
                             
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
-                }
-            }
-        }
+        //                 } else {
+        //                     echo "Status is not 200 - ${statusCode}"
+        //                 }
+        //         }
+        //     }
+        // }
 
 
-        stage('Run cypress') {
-            steps {
-                script {    
-                            sh '''
-                              kubectl apply -f cypress-tests/kubernetes -n filetracker
+        // stage('Run cypress') {
+        //     steps {
+        //         script {    
+        //                     sh '''
+        //                       kubectl apply -f cypress-tests/kubernetes -n filetracker
 
-                              kubectl get pods
-                            '''
-                }
-            }
-        }
+        //                       kubectl get pods
+        //                     '''
+        //         }
+        //     }
+        // }
 
-        stage('Get Pod Names') {
-            steps {
-                script {               
-                    sh '''
-                    kubectl get pods -n filetracker
-                    '''       
-                        // jenkinsPod = sh(script: 'kubectl get pods -n filetracker -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
-                        // echo "Found pod name: $jenkinsPod"
-                        cypressPod = sh(script: "kubectl get pods -n filetracker -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
-                        echo "Found Cypress pod name: $cypressPod"
-                }
-            }
-        }
+        // stage('Get Pod Names') {
+        //     steps {
+        //         script {               
+        //             sh '''
+        //             kubectl get pods -n filetracker
+        //             '''       
+        //                 // jenkinsPod = sh(script: 'kubectl get pods -n filetracker -l app=jenkins -o jsonpath="{.items[0].metadata.name}"', returnStdout: true).trim()
+        //                 // echo "Found pod name: $jenkinsPod"
+        //                 cypressPod = sh(script: "kubectl get pods -n filetracker -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
+        //                 echo "Found Cypress pod name: $cypressPod"
+        //         }
+        //     }
+        // }
 
         // stage('Wait for tests to run and report generation') {
         //     steps {
@@ -192,43 +189,43 @@ pipeline {
         // }
         
 
-        stage('Deciding deployment and stopping testing pods') {
-            steps {
-                script {
+        // stage('Deciding deployment and stopping testing pods') {
+        //     steps {
+        //         script {
 
-                        // Run kubectl logs command and store the output
-                        logs = sh(script: "kubectl logs -n filetracker $cypressPod -c e2e-test-app", returnStdout: true).trim()
+        //                 // Run kubectl logs command and store the output
+        //                 logs = sh(script: "kubectl logs -n filetracker $cypressPod -c e2e-test-app", returnStdout: true).trim()
 
-                        // Check if the text "all specs passed" is present in the logs
-                        if (logs.contains("All specs passed")) {
-                            echo "Specs passed: true \n Proceeding to deployment"
-                            deploy = true
-                        } else {
-                            echo "some tests failed...Check the report for issues \n Deployment aborted"
-                        }
+        //                 // Check if the text "all specs passed" is present in the logs
+        //                 if (logs.contains("All specs passed")) {
+        //                     echo "Specs passed: true \n Proceeding to deployment"
+        //                     deploy = true
+        //                 } else {
+        //                     echo "some tests failed...Check the report for issues \n Deployment aborted"
+        //                 }
 
-                        //kill the created pods and service.
+        //                 // kill the created pods and service.
 
-                        // sh "kubectl delete -n filetracker deployment express-app"
-                        // sh "kubectl delete -n filetracker deployment ui-app"
-                        // sh "kubectl delete -n filetracker job e2e-test-app-job"
-                        // sh "kubectl delete -n filetracker service ui-app"
-                        // sh "kubectl delete -n filetracker service express-app-service"
-                }
-            }
-        }
+        //                 sh "kubectl delete -n filetracker deployment express-app"
+        //                 sh "kubectl delete -n filetracker deployment ui-app"
+        //                 sh "kubectl delete -n filetracker job e2e-test-app-job"
+        //                 sh "kubectl delete -n filetracker service ui-app"
+        //                 sh "kubectl delete -n filetracker service express-app-service"
+        //         }
+        //     }
+        // }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    if(deploy==true){
-                        echo "Niiice!!! Deploying ATQ now."
-                    } else {
-                        echo "Deploying aborted. Check and resolve the failing test and try again!"
-                    }
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         script {
+        //             if(deploy==true){
+        //                 echo "Niiice!!! Deploying ATQ now."
+        //             } else {
+        //                 echo "Deploying aborted. Check and resolve the failing test and try again!"
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
 
