@@ -113,7 +113,6 @@ pipeline {
                     // Execute curl command and capture output
                     def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
 
-                    
                     // Convert output to integer
                     statusCode = statusOutput.toInteger()
                     
