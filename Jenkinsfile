@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {  
 
-                        sh 'kubectl apply -f -n filetracker express-api/kubernetes'
+                        sh 'kubectl apply -f express-api/kubernetes -n filetracker '
 
                         sleep 50
 
@@ -119,7 +119,7 @@ pipeline {
                         // Check status code
                         if (statusCode == 200) {
                             sh '''
-                              kubectl apply -f -n filetracker ui-app/kubernetes
+                              kubectl apply -f  ui-app/kubernetes -n filetracker
 
                                 sleep 50
 
@@ -138,7 +138,7 @@ pipeline {
             steps {
                 script {    
                             sh '''
-                              kubectl apply -f -n filetracker cypress-tests/kubernetes
+                              kubectl apply -f cypress-tests/kubernetes -n filetracker
 
                               kubectl get pods
                             '''
