@@ -87,8 +87,7 @@ pipeline {
 
         stage('Run Express Api') {
             steps {
-                script {
-                     withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'minikube', contextName: '', credentialsId: 'cypress-secret-token', namespace: 'default', serverUrl: 'https://192.168.49.2:8443']]) {   
+                script {  
 
                         sh 'kubectl apply -f -n filetracker express-api/kubernetes'
 
@@ -228,6 +227,6 @@ pipeline {
 // }
 
 
-// def fileExists(filePath) {
-//     return sh(script: "[ -f '$filePath' ]", returnStatus: true) == 0
-// }
+def fileExists(filePath) {
+    return sh(script: "[ -f '$filePath' ]", returnStatus: true) == 0
+}
