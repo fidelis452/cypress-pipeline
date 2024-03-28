@@ -91,22 +91,23 @@ pipeline {
                 script {  
 
                     
-                        sh '''
+                    sh '''
                         
-                        pwd
+                    pwd
                     ls -la
                      kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
-                     kubectl get pods,services -n filetracker
 
                      cd ~
+                     cd workspace
                      pwd
                      ls -la
                      
-                        '''
+                    '''
 
                     sleep 50
 
                     sh 'kubectl get pods -n filetracker'
+                    sh 'kubectl get svc -n filetracker'
                     
                     // sh 'curl http://express-app-service/students'
 
@@ -116,7 +117,7 @@ pipeline {
                     // Convert output to integer
                     statusCode = statusOutput.toInteger()
                     
-                    echo '${statusCode}'
+                    echo "The code is - ${statusCode}"
                     
                     // Check status code
                     // if (statusCode == 200) {
