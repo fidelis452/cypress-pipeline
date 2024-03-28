@@ -108,7 +108,6 @@ pipeline {
                         } else {
                             echo "Status is not 200 - ${statusCode}"
                         }
-                    }
                 }
             }
         }
@@ -130,9 +129,9 @@ pipeline {
                         } else {
                             echo "Status is not 200 - ${statusCode}"
                         }
-                    }
                 }
             }
+        }
 
 
         stage('Run cypress') {
@@ -143,9 +142,9 @@ pipeline {
 
                               kubectl get pods
                             '''
-                    }
                 }
             }
+        }
 
         stage('Get Pod Names') {
             steps {
@@ -157,9 +156,9 @@ pipeline {
                         // echo "Found pod name: $jenkinsPod"
                         cypressPod = sh(script: "kubectl get pods -n filetracker -l job-name=e2e-test-app-job -o jsonpath='{.items[0].metadata.name}'", returnStdout: true).trim()
                         echo "Found Cypress pod name: $cypressPod"
-                    }
                 }
             }
+        }
 
         // stage('Wait for tests to run and report generation') {
         //     steps {
@@ -195,9 +194,9 @@ pipeline {
                         // sh "kubectl delete -n filetracker job e2e-test-app-job"
                         // sh "kubectl delete -n filetracker service ui-app"
                         // sh "kubectl delete -n filetracker service express-app-service"
-                    }
                 }
             }
+        }
 
         stage('Deploy') {
             steps {
@@ -210,8 +209,9 @@ pipeline {
                 }
             }
         }
-
+    }
 }
+
 
 // def waitForReport() {
 //     timeout(time: 5, unit: 'MINUTES') {
