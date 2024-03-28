@@ -139,38 +139,38 @@ pipeline {
             }
         }
 
-        stage('Run Express Api') {
-            steps {
-                script {
-                    // Apply deployment YAML
-                    sh 'kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker'
+        // stage('Run Express Api') {
+        //     steps {
+        //         script {
+        //             // Apply deployment YAML
+        //             sh 'kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker'
                     
-                    // Wait for pods to be ready
-                    sleep 30
+        //             // Wait for pods to be ready
+        //             sleep 30
                     
-                    // Check the status of pods
-                    sh 'kubectl get pods -n filetracker'
+        //             // Check the status of pods
+        //             sh 'kubectl get pods -n filetracker'
                     
-                    // Execute curl command and capture output
-                    def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true, returnStatus: true)
+        //             // Execute curl command and capture output
+        //             def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true, returnStatus: true)
                     
-                    // Check if curl command was successful
-                    if (statusOutput == 0) {
-                        // Capture HTTP status code
-                        statusCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim().toInteger()
+        //             // Check if curl command was successful
+        //             if (statusOutput == 0) {
+        //                 // Capture HTTP status code
+        //                 statusCode = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim().toInteger()
                         
-                        // Check status code
-                        if (statusCode == 200) {
-                            echo "Status is 200 - OK"
-                        } else {
-                            echo "Status is not 200 - ${statusCode}"
-                        }
-                    } else {
-                        echo "Failed to execute curl command"
-                    }
-                }
-            }
-        }
+        //                 // Check status code
+        //                 if (statusCode == 200) {
+        //                     echo "Status is 200 - OK"
+        //                 } else {
+        //                     echo "Status is not 200 - ${statusCode}"
+        //                 }
+        //             } else {
+        //                 echo "Failed to execute curl command"
+        //             }
+        //         }
+        //     }
+        // }
 
 
         stage('Run Ui App') {
