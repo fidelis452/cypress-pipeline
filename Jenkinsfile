@@ -106,8 +106,11 @@ pipeline {
 
                         sleep 50
 
-                     sh 'kubectl get pods'
+                     sh 'kubectl get pods -n filetracker'
 
+                    sleep 30
+
+                     sh 'kubectl get pods -n filetracker'
                         // sh 'curl http://express-app-service/students'
 
                         // Execute curl command and capture output
