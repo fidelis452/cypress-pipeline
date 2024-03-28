@@ -95,14 +95,13 @@ pipeline {
                         
                     pwd
                     ls -la
-                     kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
-
-                     cd ~
-                     cd workspace
-                     pwd
-                     ls -la
+                    kubectl apply -f express-api/kubernetes/deployment.yaml -n filetracker
                      
                     '''
+
+                    //  cd ~
+                    //  pwd
+                    //  ls -la
 
                     sleep 50
 
@@ -114,6 +113,8 @@ pipeline {
                     // Execute curl command and capture output
                     def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-app-service/students', returnStdout: true).trim()
 
+                    echo "The code is - ${statusOutput}"
+                    
                     // Convert output to integer
                     statusCode = statusOutput.toInteger()
                     
