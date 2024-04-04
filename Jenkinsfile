@@ -153,16 +153,16 @@ pipeline {
                     sh 'kubectl get pods -n filetracker'
                     sh 'kubectl get svc -n filetracker'
 
-                    def retries = 24
-                    def delaySeconds = 15
-                    def attempts = 0
+                    // def retries = 24
+                    // def delaySeconds = 15
+                    // def attempts = 0
 
 
-                    retry(retries) {
+                    // retry(retries) {
 
-                        attempts++
+                    //     attempts++
 
-                        echo "Waiting for UI to run...Attempt ${attempts}"
+                    //     echo "Waiting for UI to run...Attempt ${attempts}"
 
                         
                             // Execute curl command to check if api endpoint returns successful response
@@ -172,9 +172,9 @@ pipeline {
                             def statusCode = statusOutput.toInteger()
 
 
-                            if (statusCode == 200) {
-                                echo "Found UI. Starting Cypress Job"
-                                // remove old report
+                            // if (statusCode == 200) {
+                            //     echo "Found UI. Starting Cypress Job"
+                            //     // remove old report
 
                                 // sh 'rm -f /shared/cypress/reports/html/index.html'
                                 // sh 'rm -f /shared/cypress/reports/mochawesome.html'
@@ -183,14 +183,14 @@ pipeline {
                                 sh 'kubectl apply -f cypress-tests/kubernetes'
 
                                 
-                            } else {
-                                echo "UI not yet up. Returned status code - ${statusCode} when probed"
-                                echo "Retrying in ${delaySeconds} seconds..."
-                                sleep delaySeconds
-                                echo "UI not up. Retry ${attempts}"
-                            }
+                            // } else {
+                            //     echo "UI not yet up. Returned status code - ${statusCode} when probed"
+                            //     echo "Retrying in ${delaySeconds} seconds..."
+                            //     sleep delaySeconds
+                            //     echo "UI not up. Retry ${attempts}"
+                            // }
                         
-                    }
+                    // }
 
                     sh '''
                     pwd
