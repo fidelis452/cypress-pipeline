@@ -19,7 +19,7 @@ pipeline {
     stages {
          
 
-       stage('Kill pods if running') {
+        stage('Kill pods if running') {
             steps {
                 script {
 
@@ -130,7 +130,7 @@ pipeline {
                         def statusCode = statusOutput.toInteger()
 
                         if (statusCode == 200) {
-                            sh "kubectl apply -f ui-vue-app/kubernetes"
+                            sh "kubectl apply -f ui-app/kubernetes"
                             echo "found api and started ui"
                         } else {
                             echo "API not yet up. Returned status code - ${statusCode} when probed"
@@ -187,6 +187,11 @@ pipeline {
                             }
                         
                     }
+
+                    sh '''
+                    pwd
+                    ls -la
+                    '''
                 }
             }
         }
@@ -325,19 +330,19 @@ pipeline {
     }
 }
 
-def waitForReport(podName) {
-    timeout(time: 5, unit: 'MINUTES') {
-        script {
-            def counter = 0 
-            while (!fileExists(podName,'filetracker','/shared/cypress/reports/html/index.html')) {
-                sh "kubectl get all -n filetracker"
-                counter++ 
-                echo "Waiting for index.html file to exist... (Attempt ${counter})"
-                sleep 10 
-            }
-        }
-    }
-}
+// def waitForReport(podName) {
+//     timeout(time: 5, unit: 'MINUTES') {
+//         script {
+//             def counter = 0 
+//             while (!fileExists(podName,'filetracker','/shared/cypress/reports/html/index.html')) {
+//                 sh "kubectl get all -n filetracker"
+//                 counter++ 
+//                 echo "Waiting for index.html file to exist... (Attempt ${counter})"
+//                 sleep 10 
+//             }
+//         }
+//     }
+// }
 
 
 def fileExists(podName, namespace, filePath) {
