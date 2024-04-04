@@ -3,6 +3,7 @@ describe('cypress works!', () => {
     cy.wait(4000)
     cy.visit('/');
     
+    cy.reload();
     
     cy.get(".text-2xl").contains("Students List")
   })
@@ -12,6 +13,9 @@ describe('cypress works!', () => {
     cy.wait(4000)
     cy.visit('/');
     
+    cy.reload();
+
+
     
     cy.get(".text-2xl").contains("Students List")
   })

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: express-app
+  name: express-api
   namespace: filetracker
   labels:
-    app: express-app
+    app: express-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: express-app
+      app: express-api
   template:
     metadata:
-      name: express-app
+      name: express-api
       labels:
-        app: express-app
+        app: express-api
     spec:
       containers:
-        - name: express-app
+        - name: express-api
           image: fideliswaweu19/express-api
           ports:
             - containerPort: 3000
@@ -27,11 +27,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: express-app-service
+  name: express-api-service
   namespace: filetracker 
 spec:
   selector:
-    app: express-app
+    app: express-api
   ports:
     - protocol: TCP
       port: 80

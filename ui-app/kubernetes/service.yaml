@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-app
+  name: ui-vue-app
   namespace: filetracker 
 spec:
   selector:
-    app: ui-app
+    app: ui-vue-app
   ports:
     - protocol: TCP
       port: 80

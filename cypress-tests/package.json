@@ -5,13 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:run": "cypress run --spec 'cypress/e2e/*'"
+    "cy:run": "cypress run --spec 'cypress/e2e/*' --reporter mochawesome --reporter-options reportDir=./cypress/reports/",
+    "merge-reports": "jrm ./results/combined.xml './results/units/*.xml'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^13.6.6",
-    "cypress-mochawesome-reporter": "^3.8.2"
+    "cypress-mochawesome-reporter": "^3.8.2",
+    "cypress-multi-reporters": "^1.6.4",
+    "mocha-junit-reporter": "^2.2.1"
+  },
+  "dependencies": {
+    "junit-report-merger": "^6.0.3",
+    "mocha": "^10.4.0",
+    "xml2js": "^0.6.2"
   }
 }

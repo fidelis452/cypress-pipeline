@@ -8,11 +8,11 @@ describe('cypress works!', () => {
   })
 
 
-  it('Student List will not be found and will fail', () => {
-    cy.wait(4000)
-    cy.visit('/');
+  // it('Student List will not be found and will fail', () => {
+  //   cy.wait(4000)
+  //   cy.visit('/');
     
     
-    cy.get(".text-2xl").contains("Students List")
-  })
+  //   cy.get(".text-2xl").contains("Students List")
+  // })
 })

@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui-app
+  name: ui-vue-app
   namespace: filetracker 
   labels:
-    app: ui-app
+    app: ui-vue-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ui-app
+      app: ui-vue-app
   template:
     metadata:
-      name: ui-app
+      name: ui-vue-app
       labels:
-        app: ui-app
+        app: ui-vue-app
     spec:
       containers:
-        - name: ui-app
-          image: fideliswaweu19/ui-app
+        - name: ui-vue-app
+          image: fideliswaweu19/ui-vue-app
           ports:
             - containerPort: 80
           imagePullPolicy: Always

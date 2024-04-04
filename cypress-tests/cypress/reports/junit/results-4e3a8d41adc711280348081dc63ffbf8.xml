@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="16.915" tests="2" failures="2">
+  <testsuite name="Root Suite" timestamp="2024-04-04T09:48:33" tests="0" file="cypress\e2e\spec.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="cypress works!" timestamp="2024-04-04T09:48:33" tests="2" time="16.903" failures="2">
+    <testcase name="cypress works! Student List was found successfully--for sure" time="0.000" classname="Student List was found successfully--for sure">
+      <failure message="Timed out retrying after 4000ms: Expected to find element: `.text-2xl`, but never found it." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 4000ms: Expected to find element: `.text-2xl`, but never found it.
+    at Context.eval (webpack://tests/./cypress/e2e/spec.cy.js:8:7)]]></failure>
+    </testcase>
+    <testcase name="cypress works! Student List will not be found and will fail" time="0.000" classname="Student List will not be found and will fail">
+      <failure message="Timed out retrying after 4000ms: Expected to find element: `.text-2xl`, but never found it." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 4000ms: Expected to find element: `.text-2xl`, but never found it.
+    at Context.eval (webpack://tests/./cypress/e2e/spec.cy.js:20:7)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
