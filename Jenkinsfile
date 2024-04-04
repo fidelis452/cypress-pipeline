@@ -166,10 +166,10 @@ pipeline {
 
                         
                             // Execute curl command to check if api endpoint returns successful response
-                            def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://express-api-service/students', returnStdout: true).trim()
+                            // def statusOutput = sh(script: 'curl -s -o /dev/null -w "%{http_code}" http://ui-vue-app-service.filetracker/', returnStdout: true).trim()
                                 
-                            // Convert output to integer
-                            def statusCode = statusOutput.toInteger()
+                            // // Convert output to integer
+                            // def statusCode = statusOutput.toInteger()
 
 
                             // if (statusCode == 200) {
