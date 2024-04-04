@@ -137,11 +137,11 @@ pipeline {
                             echo "Retrying in ${delaySeconds} seconds..."
                             sleep delaySeconds
                             echo "API not up. Retry ${attempt}"
-                        }
-
-                        
+                        }                      
                         
                     }
+                    sh 'kubectl get pods -n filetracker'
+                    sh 'kubectl get svc -n filetracker'
                 }
             }
         }
@@ -149,6 +149,10 @@ pipeline {
         stage('Run cypress test') {
             steps {
                 script {
+
+                    sh 'kubectl get pods -n filetracker'
+                    sh 'kubectl get svc -n filetracker'
+
                     def retries = 24
                     def delaySeconds = 15
                     def attempts = 0
