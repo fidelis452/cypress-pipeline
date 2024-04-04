@@ -28,8 +28,8 @@ module.exports = defineConfig({
   },
   video: false,
   e2e: {
-    // baseUrl: "http://ui-vue-app-service.filetracker",
-    baseUrl: "http://localhost:3000",
+    baseUrl: "http://ui-vue-app-service.filetracker",
+    // baseUrl: "http://localhost:3000",
     setupNodeEvents(on, config) {
       require("cypress-mochawesome-reporter/plugin")(on);
     },
